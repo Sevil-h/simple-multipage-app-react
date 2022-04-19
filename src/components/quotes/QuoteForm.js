@@ -25,7 +25,7 @@ const QuoteForm = (props) => {
 		setIsEntering(true);
 	};
 
-	const finichEnteringHandler = () => {
+	const finishEnteringHandler = () => {
 		setIsEntering(false);
 	};
 
@@ -58,7 +58,7 @@ const QuoteForm = (props) => {
 						<textarea id="text" rows="5" ref={textInputRef}></textarea>
 					</div>
 					<div className={classes.actions}>
-						<button onClick={finichEnteringHandler} className="btn">
+						<button onClick={finishEnteringHandler} className="btn">
 							Add Quote
 						</button>
 					</div>

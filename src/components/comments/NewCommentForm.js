@@ -1,29 +1,48 @@
-import { useRef } from 'react';
-
-import classes from './NewCommentForm.module.css';
+import { useRef, useEffect } from "react";
+import LoadingSpinner from "../UI/LoadingSpinner";
+import classes from "./NewCommentForm.module.css";
+import { addComment } from "../../lib/api";
+import useHttp from "../../hooks/use-http";
 
 const NewCommentForm = (props) => {
-  const commentTextRef = useRef();
+	const commentTextRef = useRef();
+	console.log(commentTextRef);
 
-  const submitFormHandler = (event) => {
-    event.preventDefault();
+	const { sendRequest, status, error } = useHttp(addComment);
+	const { onAddedComment } = props;
 
-    // optional: Could validate here
+	useEffect(() => {
+		if (status === "completed" && !error) {
+			onAddedComment();
+		}
+	}, [status]);
 
-    // send comment to server
-  };
+	const submitFormHandler = (event) => {
+		event.preventDefault();
 
-  return (
-    <form className={classes.form} onSubmit={submitFormHandler}>
-      <div className={classes.control} onSubmit={submitFormHandler}>
-        <label htmlFor='comment'>Your Comment</label>
-        <textarea id='comment' rows='5' ref={commentTextRef}></textarea>
-      </div>
-      <div className={classes.actions}>
-        <button className='btn'>Add Comment</button>
-      </div>
-    </form>
-  );
+		// optional: Could validate here
+		const enteredText = commentTextRef.current.value;
+
+		// send comment to server
+		sendRequest({ commentData: { text: enteredText }, quoteId: props.quoteId });
+	};
+
+	return (
+		<form className={classes.form} onSubmit={submitFormHandler}>
+			{status === "pending" && (
+				<div className="centered">
+					<LoadingSpinner />
+				</div>
+			)}
+			<div className={classes.control} onSubmit={submitFormHandler}>
+				<label htmlFor="comment">Your Comment</label>
+				<textarea id="comment" rows="5" ref={commentTextRef}></textarea>
+			</div>
+			<div className={classes.actions}>
+				<button className="btn">Add Comment</button>
+			</div>
+		</form>
+	);
 };
 
 export default NewCommentForm;
